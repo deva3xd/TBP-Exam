@@ -14,9 +14,9 @@
 3. Rename file .env.example to .env
 4. Create database "bookstore" in MySQL
 5. Open terminal and run
-- composer php `composer install`
-- package javascript `npm install`
-- generate app key `php artisan key:generate` 
-- migrate database `php artisan migrate`
-- faker for dummy data `php artisan db:seed`
-- run project `npm run dev` and in another terminal with same directory `php artisan serve`
+    - composer php `composer install`
+    - package javascript `npm install`
+    - generate app key `php artisan key:generate` 
+    - migrate database `php artisan migrate`
+    - faker for dummy data `php artisan db:seed`
+    - run project `npm run dev` and in another terminal with same directory `php artisan serve`
