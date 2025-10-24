@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Author;
 use App\Models\Book;
+use App\Models\User;
+use App\Models\Rating;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
@@ -13,6 +16,8 @@ class HomeController extends Controller
         $paginate = $request->get('paginate', 10);
 
         $books = Book::query()
+            ->withAvg('rating', 'rating')
+            ->withCount('rating')
             ->when(
                 $request->search,
                 function (Builder $builder) use ($request) {
@@ -22,16 +27,31 @@ class HomeController extends Controller
             ->paginate($paginate)
             ->appends($request->query());
 
-        return view('index', compact('books'));
+        $authors = Author::query()
+            ->take(10)
+            ->get();
+
+        return view('index', compact('books', 'authors'));
     }
 
-    public function create()
+    public function create($id)
     {
-        return view('insert');
+        $books = Book::where('author_id', $id)->get();
+        $author = Author::findOrFail($id);
+
+        return view('insert', compact('books', 'author'));
     }
 
-    public function store()
+    public function store(Request $request)
     {
-        // return view('insert');
+        $validated = $request->validate([
+            'book_id' => 'required|integer',
+            'rating' => 'required|integer|min:1|max:10',
+        ]);
+        $randomUser = User::inRandomOrder()->first();
+        $validated['user_id'] = $randomUser->id;
+        Rating::create($validated);
+
+        return redirect()->route('home.index')->with('success', 'Data Added');
     }
 }
